@@ -2,25 +2,29 @@
 const express = require("express");
 const app = express();
 
+// All routes are matching over here so, below all the routes never get a chance to execute
 // app.use("/", (req, res) => {
-//   res.send("Hello Vicky");
+//   res.send("HAAAAAAAAAAAAAA");
 // });
 
-// If Order of route is changed then sequence of code is matter a lot
-app.use("/hello/2", (req, res) => {
-  res.send("abcde");
+
+// This will only handle GET call to  /user
+app.get("/user", (req, res) => {
+  res.send({ fname: "Vicky", lname: "Kumar" });
 });
 
+app.post("/user", (req, res) => {
+  // Saving Data to DB
+  res.send("data successfully saved to the DB");
+});
+
+app.delete("/user", (req, res) => {
+  res.send("Deleted Successfully");
+});
+
+// This will match all the HTTP Methods API Calls to  /hello
 app.use("/hello", (req, res) => {
   res.send("Hello, Hello, Hello");
-});
-
-app.use("/test", (req, res) => {
-  res.send("Hello from the server");
-});
-
-app.use("/", (req, res) => {
-  res.send("Hello Vicky");
 });
 
 app.listen(3000, () => {
