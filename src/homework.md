@@ -14,23 +14,23 @@
 
 { Ep-4 :- Routing & Request Handlers }
 
-[part-01]
+[part-1]
 
 - Initialize a git
 - create a .gitignore file
 - create a remote repo on github
 
-[part-02]
+[part-2]
 
 - push all code to remote origin
 - play with routes & route extension Ex:- /, /hello, /hello/2, /test, /xyz, etc
 
-[part-03]
+[part-3]
 
 - install postman app & make a workspace/collection -> Test API call
 - write logic to handle GET, POST, PATCH, DELETE, API calls & test them on postman
 
-[part-04]
+[part-4]
 
 - Explore different types of routing & use of ?, +, (),* in the routes
 - use of Regex in routes as /a/, /.*fly$/
@@ -39,13 +39,13 @@
 
 { Episode-5:- Middlewares & Error Handlers}
 
-[part-01]
+[part-1]
 
 - create multiple route Handlers(rH):- play with code
 - learn next() fn & errors along with res.send();
 - do practice:- app.use("/route",rH1,[rH2,rH3],rH4,rH5);
 
-[part-02]
+[part-2]
 
 - what is Middlewares? Why do we need it?
 - How Express JS basically handle requests behind the scenes?
@@ -54,14 +54,17 @@
 - Write a dummy auth middleware for all user routes, except /user/login
  
    
-[part-03]
+[part-3]
 - Error Handling using app.use("/",(err,req,res,next)=>{...});
 - try() & catch() block
 
 { Ep-06 Database, Schema & Models | Mongoose  }
 
-[Part-01]
+[Part-1]
 - Create a free cluster on mongoDB official Website Known as Mongo Atlas
 - Install mongoose library
 - Connect your Application to the DB(devTinder), not to the cluster
 - call the ConnectDB fn & connect to Db before starting application on port 3000
+
+[Part-2]
+- create a userSchema & user model
