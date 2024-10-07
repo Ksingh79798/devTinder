@@ -68,3 +68,7 @@
 
 [Part-2]
 - create a userSchema & user model
+[Part-3]
+- create post /signup API to insert data to the db
+- push some documents using API calls from postman
+- Error Handling by using try, catch
