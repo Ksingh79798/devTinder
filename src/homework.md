@@ -45,7 +45,7 @@
 - learn next() fn & errors along with res.send();
 - do practice:- app.use("/route",rH1,[rH2,rH3],rH4,rH5);
 
-  [part-02]
+[part-02]
 
 - what is Middlewares? Why do we need it?
 - How Express JS basically handle requests behind the scenes?
@@ -54,6 +54,14 @@
 - Write a dummy auth middleware for all user routes, except /user/login
  
    
-  [part-03]
+[part-03]
 - Error Handling using app.use("/",(err,req,res,next)=>{...});
 - try() & catch() block
+
+{ Ep-06 Database, Schema & Models | Mongoose  }
+
+[Part-01]
+- Create a free cluster on mongoDB official Website Known as Mongo Atlas
+- Install mongoose library
+- Connect your Application to the DB(devTinder), not to the cluster
+- call the ConnectDB fn & connect to Db before starting application on port 3000
