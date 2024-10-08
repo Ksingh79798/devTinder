@@ -1,4 +1,4 @@
-{ Episode-3:- Creating Our Express Server }
+{---------------- Episode-3:- Creating Our Express Server ---------------- }
 
 - Create a gitHub Repository
 - Initialize the Repository
@@ -12,7 +12,7 @@
 - Diff b/w carret(^) and tilde(~)
 - What is the use of "-g" while npm install
 
-{ Ep-4 :- Routing & Request Handlers }
+{--------------- Ep-4 :- Routing & Request Handlers ---------------------- }
 
 [part-1]
 
@@ -37,7 +37,7 @@
 - How to read query params in the routes- req.query
 - How to read dynamics routes- req.params
 
-{ Episode-5:- Middlewares & Error Handlers}
+{------------- Episode-5:- Middlewares & Error Handlers--------------------}
 
 [part-1]
 
@@ -58,7 +58,7 @@
 - Error Handling using app.use("/",(err,req,res,next)=>{...});
 - try() & catch() block
 
-{ Ep-06 Database, Schema & Models | Mongoose  }
+{ -------------- Ep-06 Database, Schema & Models | Mongoose --------------- }
 
 [Part-1]
 - Create a free cluster on mongoDB official Website Known as Mongo Atlas
@@ -72,3 +72,18 @@
 - create post /signup API to insert data to the db
 - push some documents using API calls from postman
 - Error Handling by using try, catch
+
+{--------------  Ep-7 Diving into the APIs  -------------------}
+
+- Diff b/w JS object & JSON
+- Add the express.json(); middleware to your app
+- make your /signup API Dynamic to receive data from the END-USER(Browser/Postman/Any outside Server)
+- user.findOne() with duplicate email-Ids, which obj will returned ? ans:- return Arbitrary Doc
+- API :- Get user by email
+- API :- Feed API --> GET/feed -> get all the users from the db
+- create Delete user API
+- Diff b/w PATCH & PUT
+- API create a Update user
+- Explore the MongoDb & Mongoose Doc for model fn/methods
+- What are options in a model.findOneAndUpdate() method, explore more about it
+- API :- Update the user with Email-id
