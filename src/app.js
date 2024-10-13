@@ -1,7 +1,12 @@
-// Ep-7 Diving into the APIs
+// Ep-8 Diving into the APIs
 /* must read Doc of official website:- MongoDb & Mongoose -> API -> model etc.... */
 /* Create a Server */
 const express = require("express");
+
+require("dotenv").config();
+const port = process.env.PORT;
+console.log("Port:", port);
+
 const ConnectDB = require("./config/database");
 
 const app = express();
@@ -173,7 +178,7 @@ ConnectDB()
   .then(() => {
     console.log("DB Connection Establish");
     // 2nd listen to this server
-    app.listen(3000, () => {
+    app.listen(port, () => {
       console.log("Server is successfully started listening on port 3000....");
     });
   })
