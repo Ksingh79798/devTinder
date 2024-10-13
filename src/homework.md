@@ -87,3 +87,10 @@
 - Explore the MongoDb & Mongoose Doc for model fn/methods
 - What are options in a model.findOneAndUpdate() method, explore more about it
 - API :- Update the user with Email-id
+
+{--------------  Ep-8  Data Sanitization & Schema Validation  -------------------}
+-                  [part-1:- Schema level validation]
+- Explore Schema Types options from the mongoose Doc
+- add required,unique,lowercase,min,minLength,trim,default, ...etc
+- improve the DB Schema- PUT all appropriate Validations on each field in Schema
+- add timestapms to the userSchema
