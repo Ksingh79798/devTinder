@@ -87,11 +87,31 @@ app.delete("/user", async (req, res) => {
       );
   }
 });
-/* Ex-4:- UPDATE Operation --> Update the user data in our DB */
-app.patch("/user", async (req, res) => {
-  const userId = req.body.userId;
+/* Ex-4:- UPDATE Operation --> Update the user data in our DB via Dynamic userId(get from URL) */
+app.patch("/user/:userId", async (req, res) => {
+  const userId = req.params?.userId;/* here I need my userID otherwise how would i fetch that which doc will i update */
   const data = req.body;
   try {
+    /* API Level Validation */
+    const ALLOWED_UPDATES = [
+      "photoUrl",
+      "password",
+      "age",
+      "gender",
+      "about",
+      "skills",
+    ];
+
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATES.includes(k)
+    );
+    if (!isUpdateAllowed) {
+      throw new Error("update not Allowed");
+    }
+    /* skills field validations */
+    if (data?.skills.length > 10) {
+      throw new Error("Skills cannot be more than 10");
+    }
     const user = await User.findByIdAndUpdate(
       {
         _id: userId,

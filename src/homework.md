@@ -94,3 +94,6 @@
 - add required,unique,lowercase,min,minLength,trim,default, ...etc
 - improve the DB Schema- PUT all appropriate Validations on each field in Schema
 - add timestapms to the userSchema
+                     [part-2:- API level validation]
+- Add API level validation on PATCH request & signup POST api
+- Data Sanitization:- Add API Validation for each Fields
