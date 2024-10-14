@@ -89,8 +89,11 @@ app.delete("/user", async (req, res) => {
 });
 /* Ex-4:- UPDATE Operation --> Update the user data in our DB via Dynamic userId(get from URL) */
 app.patch("/user/:userId", async (req, res) => {
-  const userId = req.params?.userId;/* here I need my userID otherwise how would i fetch that which doc will i update */
+  const userId =
+    req.params
+      ?.userId; /* here I need my userID otherwise how would i fetch that which doc will i update */
   const data = req.body;
+  console.log("1", data);
   try {
     /* API Level Validation */
     const ALLOWED_UPDATES = [
@@ -100,18 +103,22 @@ app.patch("/user/:userId", async (req, res) => {
       "gender",
       "about",
       "skills",
+      // "emailId",
     ];
 
     const isUpdateAllowed = Object.keys(data).every((k) =>
       ALLOWED_UPDATES.includes(k)
     );
+    console.log("2", isUpdateAllowed);
     if (!isUpdateAllowed) {
       throw new Error("update not Allowed");
     }
-    /* skills field validations */
+    /* skills field(user Schema) validations */
+    console.log("3");
     if (data?.skills.length > 10) {
       throw new Error("Skills cannot be more than 10");
     }
+    console.log("4");
     const user = await User.findByIdAndUpdate(
       {
         _id: userId,
@@ -119,14 +126,21 @@ app.patch("/user/:userId", async (req, res) => {
       data,
       { returnDocument: "after", runValidators: true }
     );
+    console.log("5");
     console.log(user);
     res.status(200).send("user updated successfully");
   } catch (err) {
     res
       .status(400)
-      .send("Update failed of the user data in our DB:" + err.mmessage);
+      .send(
+        "Update failed of the user data in our DB:" +
+          err.name +
+          "  " +
+          err.mmessage
+      );
   }
 });
+/* Postman--> PATCH Base_URL/user/userId --> write as {"userID":"mongoDb id", "fName":"xyz" etc...} in Req Body --> SEND --> see msg "user updated successfully" in Response body [Postman] */
 
 ConnectDB()
   .then(() => {

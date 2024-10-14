@@ -97,3 +97,6 @@
                      [part-2:- API level validation]
 - Add API level validation on PATCH request & signup POST api
 - Data Sanitization:- Add API Validation for each Fields
+- Install validator via npm
+- Explore validator library fn on npm & use validator fn for password,email,photoUrl,...etc
+- NEVER TRUST-> (req.body) data
