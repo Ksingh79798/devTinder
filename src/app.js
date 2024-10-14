@@ -1,6 +1,7 @@
 // Ep-8 Data Sanitization & Schema Validation
 /* Create a Server */
 const express = require("express");
+const bcrypt = require("bcrypt");
 
 require("dotenv").config();
 const port = process.env.PORT;
@@ -10,27 +11,39 @@ const ConnectDB = require("./config/database");
 
 const app = express();
 const User = require("./models/user"); /* import User schema from model */
-
+const { validateSignupData } = require("./utils/validation");
 app.use(express.json());
 
 /* ------------------------------------  CRUD Operation ------------------- */
 /* Ex-1:- CREATE --> Push/Insert the user data into our DB */
 app.post("/signup", async (req, res) => {
-  console.log("post /signup :", req.body);
-  const user = new User(req.body);
-
+  // console.log(req.body);
   try {
+    // S-1:- Validation of data(when it came from req.body)
+    validateSignupData(req); /* Validating the signup data */
+    /* Extracting the fields as per need */
+    const { firstName, lastName, emailId, password } = req.body;
+
+    // S-2:- Encrypt/Hash the password & then Store in DB
+    const passwordHash = await bcrypt.hash(
+      password,
+      10
+    ); /* Encrypting the pass here */
+
+    // Create a new instance of the user model
+    // const user = new User(req.body); /* this is Bad way here we get all the data */
+    /* Best way is to explicitly mention all the fields as per need*/
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash /* storing the pass here */,
+    });
     await user.save();
+    console.log("5");
     res.send("user data added successfully");
   } catch (err) {
-    res
-      .status(400)
-      .send(
-        "Error for saving the data of user in DB:" +
-          err.name +
-          " " +
-          err.mmessage
-      );
+    res.status(400).send("ERROR hai:" + err.mmessage);
   }
 });
 

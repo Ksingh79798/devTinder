@@ -100,3 +100,9 @@
 - Install validator via npm
 - Explore validator library fn on npm & use validator fn for password,email,photoUrl,...etc
 - NEVER TRUST-> (req.body) data
+
+{--------------  Ep-9  Encrypting Passwords  -------------------}
+- create utils folder & create validation.js file & here we Improve /signup api by doing validation of data & Encrypt the password 
+- install bcrypt package
+- create passwordHash using bcrypt.hash() & save the user is encrypted password
+- for hash password:- Explore the bcrypt Library on npm
