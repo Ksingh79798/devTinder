@@ -40,13 +40,35 @@ app.post("/signup", async (req, res) => {
       password: passwordHash /* storing the pass here */,
     });
     await user.save();
-    console.log("5");
     res.send("user data added successfully");
   } catch (err) {
-    res.status(400).send("ERROR hai:" + err.mmessage);
+    console.log(err);
+    res.status(400).send("ERROR hai:" + err.message);
   }
 });
 
+app.post("/login", async (req, res) => {
+  try {
+    /* S-1:- Get the data from req.body */
+    const { emailId, password } = req.body;
+    /* S-2:- Check user is exist or not in my DB */
+    const user = await User.findOne({
+      emailId: emailId,
+    });
+    if (!user) {
+      throw new Error("Invalid Credentials");
+    }
+    /* S-3:- Check pass is valid or not */
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (isPasswordValid) {
+      res.send("Login Successfull!");
+    } else {
+      throw new Error("Invalid Credential!");
+    }
+  } catch (err) {
+    res.status(400).send("ERROR :" + err.message);
+  }
+});
 /* Ex-2:- READ Operation --> get/fetch/find the user data from our DB */
 app.get("/user", async (req, res) => {
   console.log("/user route:", req.body);
@@ -96,7 +118,7 @@ app.delete("/user", async (req, res) => {
         "Error for Deleting the user data from DB:" +
           err.name +
           " " +
-          err.mmessage
+          err.message
       );
   }
 });
@@ -149,7 +171,7 @@ app.patch("/user/:userId", async (req, res) => {
         "Update failed of the user data in our DB:" +
           err.name +
           "  " +
-          err.mmessage
+          err.message
       );
   }
 });

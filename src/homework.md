@@ -106,3 +106,5 @@
 - install bcrypt package
 - create passwordHash using bcrypt.hash() & save the user is encrypted password
 - for hash password:- Explore the bcrypt Library on npm
+- Create login Api
+- compare  passwords & throw errors if email or password is invalid
