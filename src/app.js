@@ -1,11 +1,13 @@
-// Ep-8 Data Sanitization & Schema Validation
+// Ep-10 Authentication, JWT & Cookies
 /* Create a Server */
 const express = require("express");
 const bcrypt = require("bcrypt");
 const cookirParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 require("dotenv").config();
 const port = process.env.PORT;
+const PASSWORD = process.env.PASSWORD;
 // console.log("Port:", port);
 
 const ConnectDB = require("./config/database");
@@ -55,7 +57,7 @@ app.post("/signup", async (req, res) => {
 app.post("/login", async (req, res) => {
   try {
     /* S-1:- Get the data from req.body */
-    const { emailId, password } = req.body;
+    const { emailId, password, userId } = req.body;
     /* S-2:- Check user is exist or not in my DB */
     // console.log(req.body);
     const user = await User.findOne({
@@ -67,7 +69,9 @@ app.post("/login", async (req, res) => {
     /* S-3:- Check pass is valid or not */
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
-      res.cookie("token", "xyz123");
+      const token = await jwt.sign({ _id: user._id }, PASSWORD);
+      res.cookie("token", token);
+      console.log("Token:..." + token);
 
       console.log(
         user.firstName + " " + user.lastName + " " + "is Login Successful!"
@@ -81,15 +85,30 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// here we make profile API 100% Secure
 app.get("/profile", async (req, res) => {
   try {
-    const cookie = req.cookies;
-    console.log(cookie);
-    res.send("Cookie is" + " " + cookie.token);
+    const cookies = req.cookies;
+    const { token } = cookies;
+    console.log("cookies", cookies);
+    console.log("token", token);
+
+    if (!token) {
+      throw new Error("Invalid Token!");
+    }
+    const decodemsg = await jwt.verify(token, PASSWORD);
+    console.log("decodemsg", decodemsg);
+    const { _id } = decodemsg;
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("user does not exist!");
+    }
+    res.send(user);
   } catch (err) {
-    res.send("Error in cookie");
+    res.status(400).send("ERROR:" + err.message);
   }
 });
+
 /* Ex-2:- READ Operation --> get/fetch/find the user data from our DB */
 app.get("/user", async (req, res) => {
   // console.log("/user route:", req.body);
