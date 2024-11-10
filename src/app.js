@@ -68,10 +68,12 @@ app.post("/login", async (req, res) => {
       throw new Error("Invalid Credentials");
     }
     /* S-3:- Check pass is valid or not */
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.validatePassword(password);
     if (isPasswordValid) {
-      const token = await jwt.sign({ _id: user._id }, PASSWORD);
-      res.cookie("token", token);
+      const token = await user.getJWT();
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 * 3600000),
+      });
       console.log("Token:..." + token);
 
       console.log(
@@ -101,7 +103,7 @@ app.post("/sendingConnections", userAuth, async (req, res) => {
     const user = req.user;
     console.log("Sending Connection Request");
     res.send(
-      user.firstName + " " + user.lastName + "Sent the connection Request"
+      user.firstName + " " + user.lastName + "" + "Sent the connection Request"
     );
   } catch (err) {
     res.status(400).send("ERROR:" + err.message);

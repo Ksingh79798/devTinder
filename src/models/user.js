@@ -1,6 +1,10 @@
 // S-1:- Import mongoose
 const mongoose = require("mongoose");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+require("dotenv").config();
+const PASSWORD = process.env.PASSWORD;
 
 // S-2:- Create a Schema as (userSchema)
 const userSchema = new mongoose.Schema(
@@ -68,6 +72,27 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+//------------ Create the Schema methods into the mongoose Schema -----------
+/* Create Token here*/
+userSchema.methods.getJWT = async function () {
+  const user = this;
+  const token = await jwt.sign({ _id: user._id }, PASSWORD, {
+    expiresIn: "7d",
+  });
+  return token;
+};
+
+/* Validate passwords here */
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
+  const user = this;
+  const passwordHash = user.password;
+  const isPasswordValid = await bcrypt.compare(
+    passwordInputByUser,
+    passwordHash
+  );
+  return isPasswordValid;
+};
 
 // S-3:- Create a model as (User)
 const User = mongoose.model("User", userSchema);
