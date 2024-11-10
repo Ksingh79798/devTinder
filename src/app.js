@@ -2,6 +2,7 @@
 /* Create a Server */
 const express = require("express");
 const bcrypt = require("bcrypt");
+const cookirParser = require("cookie-parser");
 
 require("dotenv").config();
 const port = process.env.PORT;
@@ -12,6 +13,7 @@ const ConnectDB = require("./config/database");
 const app = express();
 const User = require("./models/user"); /* import User schema from model */
 const { validateSignupData } = require("./utils/validation");
+app.use(cookirParser());
 app.use(express.json());
 
 /* ------------------------------------  CRUD Operation ------------------- */
@@ -39,10 +41,13 @@ app.post("/signup", async (req, res) => {
       emailId,
       password: passwordHash /* storing the pass here */,
     });
+    console.log(
+      `Data added successfully of` + " " + user.firstName + " " + user.lastName
+    );
     await user.save();
-    res.send("user data added successfully");
+    res.send("Data added Successfully!");
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(400).send("ERROR hai:" + err.message);
   }
 });
@@ -52,6 +57,7 @@ app.post("/login", async (req, res) => {
     /* S-1:- Get the data from req.body */
     const { emailId, password } = req.body;
     /* S-2:- Check user is exist or not in my DB */
+    // console.log(req.body);
     const user = await User.findOne({
       emailId: emailId,
     });
@@ -61,7 +67,12 @@ app.post("/login", async (req, res) => {
     /* S-3:- Check pass is valid or not */
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
-      res.send("Login Successfull!");
+      res.cookie("token", "xyz123");
+
+      console.log(
+        user.firstName + " " + user.lastName + " " + "is Login Successful!"
+      );
+      res.send("Login Successful!");
     } else {
       throw new Error("Invalid Credential!");
     }
@@ -69,9 +80,19 @@ app.post("/login", async (req, res) => {
     res.status(400).send("ERROR :" + err.message);
   }
 });
+
+app.get("/profile", async (req, res) => {
+  try {
+    const cookie = req.cookies;
+    console.log(cookie);
+    res.send("Cookie is" + " " + cookie.token);
+  } catch (err) {
+    res.send("Error in cookie");
+  }
+});
 /* Ex-2:- READ Operation --> get/fetch/find the user data from our DB */
 app.get("/user", async (req, res) => {
-  console.log("/user route:", req.body);
+  // console.log("/user route:", req.body);
   const userEmail =
     req.body
       .emailId; /* This email-id get from the request body via Browser/Postman/Any outside Server */
@@ -98,7 +119,7 @@ app.get("/user", async (req, res) => {
 });
 
 /* Ex-3:- DELETE Operation --> Delete the user data from our DB */
-app.delete("/user", async (req, res) => {
+app.delete("/user:userId", async (req, res) => {
   console.log(req.body);
   const userId = req.body.userId;
 
@@ -128,7 +149,6 @@ app.patch("/user/:userId", async (req, res) => {
     req.params
       ?.userId; /* here I need my userID otherwise how would i fetch that which doc will i update */
   const data = req.body;
-  console.log("1", data);
   try {
     /* API Level Validation */
     const ALLOWED_UPDATES = [
@@ -144,16 +164,13 @@ app.patch("/user/:userId", async (req, res) => {
     const isUpdateAllowed = Object.keys(data).every((k) =>
       ALLOWED_UPDATES.includes(k)
     );
-    console.log("2", isUpdateAllowed);
     if (!isUpdateAllowed) {
       throw new Error("update not Allowed");
     }
     /* skills field(user Schema) validations */
-    console.log("3");
     if (data?.skills.length > 10) {
       throw new Error("Skills cannot be more than 10");
     }
-    console.log("4");
     const user = await User.findByIdAndUpdate(
       {
         _id: userId,
@@ -161,7 +178,6 @@ app.patch("/user/:userId", async (req, res) => {
       data,
       { returnDocument: "after", runValidators: true }
     );
-    console.log("5");
     console.log(user);
     res.status(200).send("user updated successfully");
   } catch (err) {

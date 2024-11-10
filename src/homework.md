@@ -108,3 +108,17 @@
 - for hash password:- Explore the bcrypt Library on npm
 - Create login Api
 - compare  passwords & throw errors if email or password is invalid
+
+{-------------------- Ep- 10 Authentication, JWT & Cookies ------------------ }
+
+Install cookie-parser
+Just send a Dummy cookie to user
+Create GET/profile Api & Check if you get the Cookie
+install jsonwebtoken
+In login APi, after email & pass validation, Create a JWT Token & send it to user in cookie
+read the cookie inside your profile api & find the logged in user
+Write the userAuth middleware
+add the userAuth middleware in profile api & add new sendConnection request api
+set the expiry of JWT Token & cookies to 7 days
+create userSchema method to getJWT()
+create userSchema method to comparePassword(passwordInputByUser)
