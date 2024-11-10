@@ -4,6 +4,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const cookirParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
 
 require("dotenv").config();
 const port = process.env.PORT;
@@ -86,24 +87,22 @@ app.post("/login", async (req, res) => {
 });
 
 // here we make profile API 100% Secure
-app.get("/profile", async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const cookies = req.cookies;
-    const { token } = cookies;
-    console.log("cookies", cookies);
-    console.log("token", token);
-
-    if (!token) {
-      throw new Error("Invalid Token!");
-    }
-    const decodemsg = await jwt.verify(token, PASSWORD);
-    console.log("decodemsg", decodemsg);
-    const { _id } = decodemsg;
-    const user = await User.findById(_id);
-    if (!user) {
-      throw new Error("user does not exist!");
-    }
+    const user = req.user;
     res.send(user);
+  } catch (err) {
+    res.status(400).send("ERROR:" + err.message);
+  }
+});
+
+app.post("/sendingConnections", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    console.log("Sending Connection Request");
+    res.send(
+      user.firstName + " " + user.lastName + "Sent the connection Request"
+    );
   } catch (err) {
     res.status(400).send("ERROR:" + err.message);
   }
