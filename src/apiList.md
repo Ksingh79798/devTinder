@@ -1,14 +1,17 @@
 # authRouter
+
 - POST /signup
 - POST /login
 - POST /logout
 
 # profileRouter
+
 - GET /profile/view
 - PATCH /profile/edit
 - PATCH /profile/password
 
-# connectionsRequestRouter
+# connectionRequestRouter
+
 - Status: interested, ignored, accepted, rejected
 
 - POST /request/send/interested/:userId
@@ -22,6 +25,7 @@
 - Combine both in one route:- POST /request/review/:status/:requestId
 
 # userRouter
+
 - GET /user/connections
 - GET /user/requests
 - GET /user/feed
