@@ -122,3 +122,17 @@ add the userAuth middleware in profile api & add new sendConnection request api
 set the expiry of JWT Token & cookies to 7 days
 create userSchema method to getJWT()
 create userSchema method to comparePassword(passwordInputByUser)
+
+{------ Ep- 11 Diving into the APIs & Express Router ------- }
+
+- Explore Tinder Apis
+- create a list of all api you can think of in devTinder
+- Group multiple routes under respective routers
+- Read the Doc of express.router()
+- Create the route folder for managing auth,profile,request routers
+- create authRouter, profilerouter, requestRouter
+- import these routers in app.js
+- create POST /logout API
+- create PATCH /profile/edit API
+- create PATCH  /profile/password API :- for forgot Password
+- make you validate all the data in every POST,PATCH,....api

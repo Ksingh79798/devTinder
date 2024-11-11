@@ -1,5 +1,6 @@
 const express = require("express");
 const profileRouter = express.Router();
+const User = require("../models/user");
 const { userAuth } = require("../middlewares/auth");
 const { validateEditProfileData } = require("../utils/validation");
 
@@ -38,7 +39,13 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 // forgot Password
 profileRouter.patch("/profile/password", userAuth, async (req, res) => {
   try {
-  } catch (err) {}
+    const { password } = req.body;
+    console.log(password);
+    // write Logic here
+    res.send("forgotPassword");
+  } catch (err) {
+    res.send("Error in Forgot password");
+  }
 });
 
 module.exports = profileRouter;
