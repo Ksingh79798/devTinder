@@ -1,121 +1,26 @@
-// Ep-10 Authentication, JWT & Cookies
+// Ep-11:-  Diving into the apis & Express Router
 /* Create a Server */
 const express = require("express");
-const bcrypt = require("bcrypt");
 const cookirParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
-const { userAuth } = require("./middlewares/auth");
+const authRouter = require("./routes/auth");
+const profileRouter = require("./routes/profile");
+const requestRouter = require("./routes/requests");
 
 require("dotenv").config();
 const port = process.env.PORT;
-const PASSWORD = process.env.PASSWORD;
-// console.log("Port:", port);
-
 const ConnectDB = require("./config/database");
 
 const app = express();
-const User = require("./models/user"); /* import User schema from model */
-const { validateSignupData } = require("./utils/validation");
+const User = require("./models/user");
 app.use(cookirParser());
 app.use(express.json());
 
-/* ------------------------------------  CRUD Operation ------------------- */
-/* Ex-1:- CREATE --> Push/Insert the user data into our DB */
-app.post("/signup", async (req, res) => {
-  // console.log(req.body);
-  try {
-    // S-1:- Validation of data(when it came from req.body)
-    validateSignupData(req); /* Validating the signup data */
-    /* Extracting the fields as per need */
-    const { firstName, lastName, emailId, password } = req.body;
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestRouter);
 
-    // S-2:- Encrypt/Hash the password & then Store in DB
-    const passwordHash = await bcrypt.hash(
-      password,
-      10
-    ); /* Encrypting the pass here */
-
-    // Create a new instance of the user model
-    // const user = new User(req.body); /* this is Bad way here we get all the data */
-    /* Best way is to explicitly mention all the fields as per need*/
-    const user = new User({
-      firstName,
-      lastName,
-      emailId,
-      password: passwordHash /* storing the pass here */,
-    });
-    console.log(
-      `Data added successfully of` + " " + user.firstName + " " + user.lastName
-    );
-    await user.save();
-    res.send("Data added Successfully!");
-  } catch (err) {
-    // console.log(err);
-    res.status(400).send("ERROR hai:" + err.message);
-  }
-});
-
-app.post("/login", async (req, res) => {
-  try {
-    /* S-1:- Get the data from req.body */
-    const { emailId, password, userId } = req.body;
-    /* S-2:- Check user is exist or not in my DB */
-    // console.log(req.body);
-    const user = await User.findOne({
-      emailId: emailId,
-    });
-    if (!user) {
-      throw new Error("Invalid Credentials");
-    }
-    /* S-3:- Check pass is valid or not */
-    const isPasswordValid = await user.validatePassword(password);
-    if (isPasswordValid) {
-      const token = await user.getJWT();
-      res.cookie("token", token, {
-        expires: new Date(Date.now() + 8 * 3600000),
-      });
-      console.log("Token:..." + token);
-
-      console.log(
-        user.firstName + " " + user.lastName + " " + "is Login Successful!"
-      );
-      res.send("Login Successful!");
-    } else {
-      throw new Error("Invalid Credential!");
-    }
-  } catch (err) {
-    res.status(400).send("ERROR :" + err.message);
-  }
-});
-
-// here we make profile API 100% Secure
-app.get("/profile", userAuth, async (req, res) => {
-  try {
-    const user = req.user;
-    res.send(user);
-  } catch (err) {
-    res.status(400).send("ERROR:" + err.message);
-  }
-});
-
-app.post("/sendingConnections", userAuth, async (req, res) => {
-  try {
-    const user = req.user;
-    console.log("Sending Connection Request");
-    res.send(
-      user.firstName + " " + user.lastName + "" + "Sent the connection Request"
-    );
-  } catch (err) {
-    res.status(400).send("ERROR:" + err.message);
-  }
-});
-
-/* Ex-2:- READ Operation --> get/fetch/find the user data from our DB */
 app.get("/user", async (req, res) => {
-  // console.log("/user route:", req.body);
-  const userEmail =
-    req.body
-      .emailId; /* This email-id get from the request body via Browser/Postman/Any outside Server */
+  const userEmail = req.body.emailId;
 
   try {
     const users = await User.find({
@@ -138,7 +43,6 @@ app.get("/user", async (req, res) => {
   }
 });
 
-/* Ex-3:- DELETE Operation --> Delete the user data from our DB */
 app.delete("/user:userId", async (req, res) => {
   console.log(req.body);
   const userId = req.body.userId;
@@ -163,11 +67,9 @@ app.delete("/user:userId", async (req, res) => {
       );
   }
 });
-/* Ex-4:- UPDATE Operation --> Update the user data in our DB via Dynamic userId(get from URL) */
+
 app.patch("/user/:userId", async (req, res) => {
-  const userId =
-    req.params
-      ?.userId; /* here I need my userID otherwise how would i fetch that which doc will i update */
+  const userId = req.params?.userId;
   const data = req.body;
   try {
     /* API Level Validation */
@@ -211,12 +113,10 @@ app.patch("/user/:userId", async (req, res) => {
       );
   }
 });
-/* Postman--> PATCH Base_URL/user/userId --> write as {"userID":"mongoDb id", "fName":"xyz" etc...} in Req Body --> SEND --> see msg "user updated successfully" in Response body [Postman] */
 
 ConnectDB()
   .then(() => {
     console.log("DB Connection Establish");
-    // 2nd listen to this server
     app.listen(port, () => {
       console.log("Server is successfully started listening on port 3000....");
     });
