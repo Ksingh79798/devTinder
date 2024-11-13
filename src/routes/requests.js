@@ -3,7 +3,10 @@ const requestRouter = express.Router();
 const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
+// const app = express();
+// app.use(express.json());
 
+// Sender Side
 requestRouter.post(
   "/request/send/:status/:toUserId",
   userAuth,
@@ -13,9 +16,9 @@ requestRouter.post(
       const toUserId = req.params.toUserId;
       const status = req.params.status;
 
-      console.log(fromUserId);
-      console.log(toUserId);
-      console.log(status);
+      //   console.log(fromUserId);
+      //   console.log(toUserId);
+      //   console.log(status);
       // corner-case-1:- random status name accepted, for avoid so check status
       const allowedStatus = ["ignored", "interested"];
       if (!allowedStatus.includes(status)) {
@@ -76,6 +79,52 @@ requestRouter.post(
       });
     } catch (err) {
       res.status(400).send("ERROR:" + err.message);
+    }
+  }
+);
+
+// Receiver Side
+requestRouter.post(
+  "/request/review/:status/:requestId",
+  userAuth,
+  async (req, res) => {
+    try {
+      const loggedInUser = req.user;
+      console.log(req.user);
+      const { status, requestId } = req.params;
+      // validation Start
+      const allowedStatus = ["accepted", "rejected"];
+      if (!allowedStatus.includes(status)) {
+        return res.status(400).json({
+          message: "status not allowed",
+        });
+      }
+
+      // Find one CR by using _id, toUserId, status
+      const connectionRequest = await ConnectionRequest.findOne({
+        _id: requestId,
+        toUserId: loggedInUser._id,
+        status: "interested",
+      });
+
+      console.log(connectionRequest);
+      // If don't find any CR
+      if (!connectionRequest) {
+        return res
+          .status(404)
+          .json({ message: "Connection Request not Found" });
+      }
+      // validation End
+      // Modify the status
+      connectionRequest.status = status;
+      // Save CR in DB
+      const data = await connectionRequest.save();
+      res.json({
+        message: "Connection Request" + status,
+        data,
+      });
+    } catch (err) {
+      res.status(400).send("Error:" + err.message);
     }
   }
 );
