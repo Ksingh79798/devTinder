@@ -57,6 +57,15 @@ userRouter.get("/feed", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
     console.log("loggedInUser :->", loggedInUser);
+
+    // pagination start
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit > 50 ? 50 : limit;
+    const skip = (page - 1) * limit;
+    //  pagination end
+
+    // Db call for CR
     const connectionRequests = await ConnectionRequest.find({
       $or: [
         { fromUserId: loggedInUser._id },
@@ -67,6 +76,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
     }).select("fromUserId toUserId");
     console.log("CR: ->", connectionRequests);
 
+    // corner-case:- hide user from feed
     const hideUsersFromFeed = new Set();
     connectionRequests.forEach((req) => {
       hideUsersFromFeed.add(req.fromUserId.toString());
@@ -74,6 +84,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
     });
     console.log("hideUsersFromFeed:-", hideUsersFromFeed);
 
+    // Db call for User
     const users = await User.find({
       $and: [
         { _id: { $nin: Array.from(hideUsersFromFeed) } },
@@ -81,7 +92,11 @@ userRouter.get("/feed", userAuth, async (req, res) => {
           _id: { $ne: loggedInUser._id },
         },
       ],
-    }).select(USER_SAFE_DATA);
+    })
+      .select(USER_SAFE_DATA)
+      .skip(skip)
+      .limit(limit);
+
     console.log("users:- ", users);
     res.json({ data: users });
   } catch (err) {
