@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const { validateSignupData } = require("../utils/validation");
 const User = require("../models/user");
 
-
 // const router = express.Router(); /* use in Company */
 const authRouter = express.Router(); /* use for beginer */
 
@@ -66,7 +65,7 @@ authRouter.post("/login", async (req, res) => {
       console.log(
         user.firstName + " " + user.lastName + " " + "is Login Successful!"
       );
-      res.send("Login Successful!");
+      res.send(user);
     } else {
       throw new Error("Invalid Credential!");
     }

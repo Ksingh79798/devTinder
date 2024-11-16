@@ -5,6 +5,7 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/requests");
 const userRouter = require("./routes/user");
+const cors = require("cors");
 
 require("dotenv").config();
 const port = process.env.PORT;
@@ -14,6 +15,12 @@ const app = express();
 const User = require("./models/user");
 app.use(cookirParser());
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:5173/",
+    credentials: true,
+  })
+);
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
