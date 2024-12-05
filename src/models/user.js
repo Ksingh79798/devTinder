@@ -41,7 +41,8 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
       type: String,
-      default: "https://www.pngwing.com/en/free-png-vodjo",
+      default:
+        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
       validator(value) {
         if (!validator.isURL(value)) {
           throw new Error("This is Invalid URL address:" + value);

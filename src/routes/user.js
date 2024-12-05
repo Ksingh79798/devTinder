@@ -38,15 +38,17 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
           status: "accepted",
         },
       ],
-    }).populate("fromUserId", USER_SAFE_DATA);
-    console.log(connectionRequest);
-    const data = connectionRequest.map((row) => {
-      if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
-        return row.toUserId;
-      }
-      return row.fromUserId;
-    });
+    }).populate("toUserId", USER_SAFE_DATA);
+    // .populate("fromUserId", ["firstName", "lastName", "age"]);
 
+    const data = connectionRequest.map((data) => {
+      if (data.fromUserId._id.toString() === loggedInUser._id.toString()) {
+        return data.toUserId;
+      }
+      return data.fromUserId;
+    });
+    // console.log("data", data);
+    // console.log("CR:-", connectionRequest);
     res.json(data);
   } catch (err) {
     req.statusCode(400).send("Error:" + err.message);
