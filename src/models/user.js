@@ -63,16 +63,23 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      validate(value) {
-        /* Also we can Add custom validation fn on each fields as per nedd*/
-        if (!["male", "female", "others"].includes(value)) {
-          throw new Error("Gender data is not valid");
-        }
+      enum: {
+        values: ["male", "female", "other"],
+        message: `{VALUE} is not a valid gender type`,
       },
+      /* OR */
+      // validate(value) {
+      //   /* Also we can Add custom validation fn on each fields as per nedd*/
+      //   if (!["male", "female", "others"].includes(value)) {
+      //     throw new Error("Gender data is not valid");
+      //   }
+      // },
     },
   },
   { timestamps: true }
 );
+
+// userSchema.index({ firstName: 1, lastName: 1 });
 
 //------------ Create the Schema methods into the mongoose Schema -----------
 /* Create Token here*/

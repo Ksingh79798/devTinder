@@ -16,9 +16,6 @@ requestRouter.post(
       const toUserId = req.params.toUserId;
       const status = req.params.status;
 
-      //   console.log(fromUserId);
-      //   console.log(toUserId);
-      //   console.log(status);
       // corner-case-1:- random status name accepted, for avoid so check status
       const allowedStatus = ["ignored", "interested"];
       if (!allowedStatus.includes(status)) {
@@ -90,7 +87,6 @@ requestRouter.post(
   async (req, res) => {
     try {
       const loggedInUser = req.user;
-      console.log(req.user);
       const { status, requestId } = req.params;
       // validation Start
       const allowedStatus = ["accepted", "rejected"];
@@ -104,10 +100,11 @@ requestRouter.post(
       const connectionRequest = await ConnectionRequest.findOne({
         _id: requestId,
         toUserId: loggedInUser._id,
+        // fromUserId: loggedInUser._id,
         status: "interested",
       });
 
-      console.log(connectionRequest);
+      console.log("CR", connectionRequest);
       // If don't find any CR
       if (!connectionRequest) {
         return res
@@ -120,7 +117,7 @@ requestRouter.post(
       // Save CR in DB
       const data = await connectionRequest.save();
       res.json({
-        message: "Connection Request" + status,
+        message: "Connection Request" + " " + status,
         data,
       });
     } catch (err) {

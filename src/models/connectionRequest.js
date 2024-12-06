@@ -26,6 +26,8 @@ const connectionRequestSchema = new mongoose.Schema(
   { timeStamps: true }
 );
 
+connectionRequestSchema.index({ fromUserId: 1, toUserId: 1 });
+
 // Corner-Cases:- Don't allow to send the C.R to itself
 // This M will be called every time the C.R will be saved in DB
 connectionRequestSchema.pre("save", function (next) {
