@@ -29,11 +29,16 @@ authRouter.post("/signup", async (req, res) => {
       emailId,
       password: passwordHash /* storing the pass here */,
     });
-    console.log(
-      `Data added successfully of` + " " + user.firstName + " " + user.lastName
-    );
-    await user.save();
-    res.send("Data added Successfully!");
+    // console.log(
+    //   `Data added successfully of` + " " + user.firstName + " " + user.lastName
+    // );
+
+    const savedUser = await user.save();
+    const token = await savedUser.getJWT();
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 8 * 3600000),
+    });
+    res.json({ message: "User Added successfully!", data: savedUser });
   } catch (err) {
     // console.log(err);
     res.status(400).send("ERROR hai:" + err.message);
